@@ -16,8 +16,6 @@ const token = async (req: Request, res: Response) => {
 
   const httpsUrl = apiUrls.get(String(req.query.network));
 
-  console.log(httpsUrl);
-
   var web3 = new Web3(new Web3.providers.HttpProvider(httpsUrl as string));
 
   const httpsProvider = ethers.getDefaultProvider(httpsUrl);
