@@ -14,9 +14,11 @@ const wallet = new ethers.Wallet(privateKey);
 const token = async (req: Request, res: Response) => {
   const address = wallet.address;
 
-  const httpsUrl = apiUrls.get(String(req.query.network!));
+  const httpsUrl = apiUrls.get(String(req.query.network));
 
-  var web3 = new Web3(new Web3.providers.HttpProvider(httpsUrl!));
+  console.log(httpsUrl);
+
+  var web3 = new Web3(new Web3.providers.HttpProvider(httpsUrl as string));
 
   const httpsProvider = ethers.getDefaultProvider(httpsUrl);
 
