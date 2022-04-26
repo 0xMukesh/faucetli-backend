@@ -4,7 +4,14 @@ import dotenv from 'dotenv';
 import Web3 from 'web3';
 
 import constants from '../data/constants';
-import { chainId, txUrl, apiUrls, amount } from '../data/networks';
+import {
+  chainId,
+  txUrl,
+  apiKeys,
+  httpsUrls,
+  amount,
+  ethersSupportedNetworkNames,
+} from '../data/networks';
 
 dotenv.config();
 
@@ -14,18 +21,23 @@ const wallet = new ethers.Wallet(privateKey);
 const token = async (req: Request, res: Response) => {
   const address = wallet.address;
 
-  const httpsUrl = apiUrls.get(String(req.query.network));
+  const networkApiKey = apiKeys.get(String(req.query.network));
+  const networkHttpsUrl = httpsUrls.get(String(req.query.network));
 
-  var web3 = new Web3(new Web3.providers.HttpProvider(httpsUrl as string));
+  var web3 = new Web3(
+    new Web3.providers.HttpProvider(networkHttpsUrl as string)
+  );
 
-  const httpsProvider = ethers.getDefaultProvider(httpsUrl);
+  const httpsProvider = new ethers.providers.AlchemyProvider(
+    ethersSupportedNetworkNames.get(req.query.network as string),
+    networkApiKey
+  );
 
   let nonce = await httpsProvider.getTransactionCount(address, 'latest');
 
   let feeData = await httpsProvider.getFeeData();
 
   const balance = web3.utils.fromWei(
-    // @ts-ignore
     await web3.eth.getBalance(constants['fromAddress']),
     'ether'
   );
@@ -36,8 +48,7 @@ const token = async (req: Request, res: Response) => {
       invalidAddress: true,
     });
   } else {
-    // @ts-ignore
-    if (balance < amount?.get(req.query.network)!) {
+    if (balance < amount?.get(req.query.network as string)!) {
       res.json({
         error: 'Insufficient funds',
         insufficientFunds: true,
@@ -49,14 +60,14 @@ const token = async (req: Request, res: Response) => {
         to: req.query.address,
         maxPriorityFeePerGas: feeData['maxPriorityFeePerGas'],
         maxFeePerGas: feeData['maxFeePerGas'],
-        // @ts-ignore
-        value: ethers.utils.parseEther(amount.get(req.query.network)),
+        value: ethers.utils.parseEther(
+          amount.get(req.query.network as string) as string
+        ),
         gasLimit: 30000,
         chainId: chainId.get(String(req.query.network)),
       };
 
-      // @ts-ignore
-      const signedTx = await wallet.signTransaction(tx);
+      const signedTx = await wallet.signTransaction(tx as any);
 
       const txHash = ethers.utils.keccak256(signedTx);
       console.log('Precomputed txHash:', txHash);
