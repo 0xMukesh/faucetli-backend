@@ -15,8 +15,8 @@ import {
 
 dotenv.config();
 
-const privateKey = process.env.PRIVATE_KEY!.toString();
-const wallet = new ethers.Wallet(privateKey);
+const privateKey = process.env.PRIVATE_KEY;
+const wallet = new ethers.Wallet(privateKey as string);
 
 const token = async (req: Request, res: Response) => {
   const address = wallet.address;
