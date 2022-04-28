@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
-import Web3 from 'web3';
+
+import verifyAddress from '../utils/verifyAddress';
 
 import constants from '../data/constants';
 import {
   chainId,
   txUrl,
   apiKeys,
-  httpsUrls,
   amount,
   ethersSupportedNetworkNames,
 } from '../data/networks';
@@ -22,11 +22,6 @@ const token = async (req: Request, res: Response) => {
   const address = wallet.address;
 
   const networkApiKey = apiKeys.get(String(req.query.network));
-  const networkHttpsUrl = httpsUrls.get(String(req.query.network));
-
-  var web3 = new Web3(
-    new Web3.providers.HttpProvider(networkHttpsUrl as string)
-  );
 
   const httpsProvider = new ethers.providers.AlchemyProvider(
     ethersSupportedNetworkNames.get(req.query.network as string),
@@ -37,12 +32,13 @@ const token = async (req: Request, res: Response) => {
 
   let feeData = await httpsProvider.getFeeData();
 
-  const balance = web3.utils.fromWei(
-    await web3.eth.getBalance(constants['fromAddress']),
-    'ether'
-  );
+  const balance = await httpsProvider
+    .getBalance(constants['fromAddress'])
+    .then((balance) => {
+      return ethers.utils.formatEther(balance);
+    });
 
-  if (web3.utils.isAddress(String(req.query.address!)) === false) {
+  if (verifyAddress(req.query.address as string) === false) {
     res.json({
       error: 'Invalid receiver address',
       invalidAddress: true,

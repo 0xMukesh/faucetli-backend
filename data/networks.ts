@@ -17,19 +17,6 @@ const apiKeys = new Map([
   ['rinkeby', process.env.ALCHEMY_API_KEY_RINKEBY],
 ]);
 
-const httpsUrls = new Map([
-  [
-    'mumbai',
-    'https://polygon-mumbai.g.alchemy.com/v2/' +
-      process.env.ALCHEMY_API_KEY_MUMBAI,
-  ],
-  [
-    'rinkeby',
-    'https://eth-rinkeby.alchemyapi.io/v2/' +
-      process.env.ALCHEMY_API_KEY_RINKEBY,
-  ],
-]);
-
 const ethersSupportedNetworkNames = new Map([
   ['mumbai', 'maticmum'],
   ['rinkeby', 'rinkeby'],
@@ -40,11 +27,4 @@ const amount = new Map([
   ['rinkeby', '0.1'],
 ]);
 
-export {
-  chainId,
-  txUrl,
-  apiKeys,
-  httpsUrls,
-  amount,
-  ethersSupportedNetworkNames,
-};
+export { chainId, txUrl, apiKeys, amount, ethersSupportedNetworkNames };
