@@ -1,8 +1,8 @@
-import ethers from 'ethers';
+import { utils } from 'ethers';
 
 const verifyAddress = (address: string) => {
   try {
-    ethers.utils.getAddress(address);
+    utils.getAddress(address);
   } catch {
     return false;
   }
