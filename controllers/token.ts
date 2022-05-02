@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ethers, utils } from "ethers";
+import { ethers, utils, BigNumber } from "ethers";
 import dotenv from "dotenv";
 
 import verifyAddress from "../utils/verifyAddress";
@@ -11,6 +11,7 @@ import {
   apiKeys,
   amount,
   ethersSupportedNetworkNames,
+  maxTokenLimit,
 } from "../data/networks";
 
 dotenv.config();
@@ -19,18 +20,16 @@ const token = async (req: Request, res: Response) => {
   try {
     // Validate if the client has sent the address
     if (!req.query.address) {
-      res
+      return res
         .status(400)
         .json({ error: "No address specified", invalidAddress: true });
     }
 
     if (!ethersSupportedNetworkNames.get(req.query.network as string)) {
-      res
-        .status(400)
-        .json({
-          error: "Invalid or unsupported network",
-          invalidNetwork: true,
-        });
+      return res.status(400).json({
+        error: "Invalid or unsupported network",
+        invalidNetwork: true,
+      });
     }
 
     const privateKey = process.env.PRIVATE_KEY;
@@ -44,6 +43,21 @@ const token = async (req: Request, res: Response) => {
       networkApiKey
     );
 
+    const userBalance: BigNumber = await httpsProvider.getBalance(
+      req.query.address as string
+    );
+
+    const userBalanceParsed: number = parseInt(userBalance.toString()) / 1e18;
+
+    console.log(userBalanceParsed);
+
+    if (userBalanceParsed > maxTokenLimit.get(req.query.network as string)!) {
+      return res.status(400).json({
+        error: "User balance exceeds the maximum limit",
+        exceedsMaxLimit: true,
+      });
+    }
+
     let nonce = await httpsProvider.getTransactionCount(address, "latest");
 
     let feeData = await httpsProvider.getFeeData();
@@ -55,13 +69,13 @@ const token = async (req: Request, res: Response) => {
       });
 
     if (verifyAddress(req.query.address as string) === false) {
-      res.status(400).json({
+      return res.status(400).json({
         error: "Invalid receiver address",
         invalidAddress: true,
       });
     } else {
       if (balance < amount?.get(req.query.network as string)!) {
-        res.status(400).json({
+        return res.status(400).json({
           error: "Insufficient funds",
           insufficientFunds: true,
         });
@@ -85,13 +99,14 @@ const token = async (req: Request, res: Response) => {
         console.log("Precomputed txHash:", txHash);
         httpsProvider.sendTransaction(signedTx).then(console.log);
 
-        res.json({
+        return res.json({
           txLink: `${txUrl.get(String(req.query.network))}/${txHash}`,
         });
       }
     }
   } catch (err) {
     console.error("[ERR] in token.ts request part\n", err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
