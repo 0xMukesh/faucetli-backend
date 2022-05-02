@@ -24,6 +24,15 @@ const token = async (req: Request, res: Response) => {
         .json({ error: "No address specified", invalidAddress: true });
     }
 
+    if (!ethersSupportedNetworkNames.get(req.query.network as string)) {
+      res
+        .status(400)
+        .json({
+          error: "Invalid or unsupported network",
+          invalidNetwork: true,
+        });
+    }
+
     const privateKey = process.env.PRIVATE_KEY;
     const wallet = new ethers.Wallet(privateKey as string);
     const address = wallet.address;
