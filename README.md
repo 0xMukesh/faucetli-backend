@@ -2,7 +2,7 @@
 
 This repository contains the backend of the faucetli command line tool.
 
-🎉 Core repository: https://github.com/kira272921/faucetli
+🎉 Core repository: https://github.com/mukesh272921/faucetli
 
 ## 🤝 Contributing
 
