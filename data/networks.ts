@@ -23,6 +23,8 @@ const ethersSupportedNetworkNames = new Map([
   ["rinkeby", "rinkeby"],
 ]);
 
+const solanaSupportedNetworkNames = new Map([["devnet", "devnet"]]);
+
 const amount = new Map([
   ["mumbai", "1"],
   ["rinkeby", "0.1"],
@@ -41,5 +43,6 @@ export {
   apiKeys,
   amount,
   ethersSupportedNetworkNames,
+  solanaSupportedNetworkNames,
   maxTokenLimit,
 };
