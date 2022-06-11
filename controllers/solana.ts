@@ -39,7 +39,7 @@ const solana = async (req: Request, res: Response) => {
     const balance = await connection.getBalance(wallet);
     const balanceSol = balance / web3.LAMPORTS_PER_SOL;
 
-    if (balanceSol > maxTokenLimit.get(network)!) {
+    if (balanceSol >= maxTokenLimit.get(network)!) {
       return res.json({
         error: "User balance exceeds the maximum limit",
         exceedsMaxLimit: true,
@@ -51,7 +51,9 @@ const solana = async (req: Request, res: Response) => {
       web3.LAMPORTS_PER_SOL * Number(amount.get(network))
     );
 
-    return res.json({ txLink: `${txUrl.get(network)}/${txHash}` });
+    return res.json({
+      txLink: `${txUrl.get(network)}/${txHash}?cluster=devnet`,
+    });
   } catch (err) {
     console.error(err);
     return res.json({ error: "Internal server error" });
