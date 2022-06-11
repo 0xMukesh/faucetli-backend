@@ -10,6 +10,7 @@ const chainId = new Map([
 const txUrl = new Map([
   ["mumbai", "https://mumbai.polygonscan.com/tx"],
   ["rinkeby", "https://rinkeby.etherscan.io/tx"],
+  ["devnet", "https://explorer.solana.com/tx"],
 ]);
 
 const apiKeys = new Map([
@@ -22,14 +23,20 @@ const ethersSupportedNetworkNames = new Map([
   ["rinkeby", "rinkeby"],
 ]);
 
+const solanaSupportedNetworkNames = new Map([["devnet", "devnet"]]);
+
+const solanaApiUrls = new Map([["devnet", "https://api.devnet.solana.com"]]);
+
 const amount = new Map([
   ["mumbai", "1"],
   ["rinkeby", "0.1"],
+  ["devnet", "1"],
 ]);
 
 const maxTokenLimit = new Map<string, number>([
   ["mumbai", 5],
   ["rinkeby", 1],
+  ["devnet", 5],
 ]);
 
 export {
@@ -38,5 +45,7 @@ export {
   apiKeys,
   amount,
   ethersSupportedNetworkNames,
+  solanaSupportedNetworkNames,
+  solanaApiUrls,
   maxTokenLimit,
 };
