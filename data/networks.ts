@@ -25,6 +25,8 @@ const ethersSupportedNetworkNames = new Map([
 
 const solanaSupportedNetworkNames = new Map([["devnet", "devnet"]]);
 
+const solanaApiUrls = new Map([["devnet", "https://api.devnet.solana.com"]]);
+
 const amount = new Map([
   ["mumbai", "1"],
   ["rinkeby", "0.1"],
@@ -44,5 +46,6 @@ export {
   amount,
   ethersSupportedNetworkNames,
   solanaSupportedNetworkNames,
+  solanaApiUrls,
   maxTokenLimit,
 };
