@@ -56,7 +56,7 @@ const solana = async (req: Request, res: Response) => {
     });
   } catch (err) {
     console.error(err);
-    return res.json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
